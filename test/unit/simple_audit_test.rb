@@ -53,7 +53,8 @@ class SimpleAuditTest < ActiveSupport::TestCase
   
   test "should audit all attributes by default" do
     address = Address.create
-    assert_equal Audit.last.change_log.keys.sort, Address.column_names.sort
+    differences = Address.attribute_names.map(&:to_s).sort - Audit.last.change_log.keys.map(&:to_s).sort
+    assert_equal 0, differences.length
   end
 
   test "should use proper username method" do
