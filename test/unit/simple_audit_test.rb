@@ -53,7 +53,16 @@ class SimpleAuditTest < ActiveSupport::TestCase
   
   test "should audit all attributes by default" do
     address = Address.create
-    assert_equal Audit.last.change_log.keys.sort, Address.column_names.sort
+    differences = Address.attribute_names.map(&:to_s).sort - Audit.last.change_log.keys.map(&:to_s).sort
+    assert_equal 0, differences.length
+  end
+
+  test "should not create audit if block returns falsy value" do
+    secretive_person = SecretivePerson.create(:name => "Mihai Tarnovan", :email => "mihai.tarnovan@cubus.ro", :address => Address.new(:line_1 => "M. Viteazu nr. 11 sc. C ap.32", :zip => "550350"))
+    secretive_person.update_attributes name: "Jim bob"
+    secretive_person.update_attributes address: Address.new(:line_1 => "Whitehouse", :zip => "12345")
+    secretive_person.update_attributes name: "Marky Mark"
+    assert_equal 2, secretive_person.audits.length
   end
 
   test "should use proper username method" do
