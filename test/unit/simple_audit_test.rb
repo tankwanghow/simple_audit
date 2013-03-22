@@ -57,6 +57,14 @@ class SimpleAuditTest < ActiveSupport::TestCase
     assert_equal 0, differences.length
   end
 
+  test "should not create audit if block returns falsy value" do
+    secretive_person = SecretivePerson.create(:name => "Mihai Tarnovan", :email => "mihai.tarnovan@cubus.ro", :address => Address.new(:line_1 => "M. Viteazu nr. 11 sc. C ap.32", :zip => "550350"))
+    secretive_person.update_attributes name: "Jim bob"
+    secretive_person.update_attributes address: Address.new(:line_1 => "Whitehouse", :zip => "12345")
+    secretive_person.update_attributes name: "Marky Mark"
+    assert_equal 2, secretive_person.audits.length
+  end
+
   test "should use proper username method" do
     address = HomeAddress.create
     assert_equal User.new.short_name, address.audits.last.username
