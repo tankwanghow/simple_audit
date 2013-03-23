@@ -4,7 +4,6 @@ require 'active_support/all'
 require 'active_record'
 require 'active_record/fixtures'
 require 'action_controller'
-require 'ruby-debug'
 require 'ostruct'
 
 require File.join(File.dirname(__FILE__), "..", "generators", "simple_audit_migration", "templates", "migration.rb")
@@ -21,6 +20,7 @@ ActiveRecord::Migration.suppress_messages {
       create_table "people", :force => true do |t|
         t.column "name",  :text
         t.column "email", :text
+        t.column "email", :text 
       end
       create_table "addresses", :force => true do |t|
         t.column "line_1", :text
@@ -43,6 +43,17 @@ class Person < ActiveRecord::Base
       :name => record.name,
       :address => { :line_1 => record.address.line_1, :zip => record.address.zip }
     }
+  end
+end
+
+class SecretivePerson < Person
+  simple_audit do |record|
+    unless record.name_changed?
+      {
+        :name => record.name,
+        :address => { :line_1 => record.address.line_1, :zip => record.address.zip }
+      }
+    end
   end
 end
 

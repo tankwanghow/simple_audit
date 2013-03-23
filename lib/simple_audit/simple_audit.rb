@@ -70,11 +70,14 @@ module SimpleAudit
 
       def audit(record, action = :update, user = nil) #:nodoc:
         user ||= User.current if User.respond_to?(:current)
-        record.audits.create(:user => user,
-          :username => user.try(self.username_method),
-          :action => action.to_s,
-          :change_log => self.audit_changes.call(record)
-        )
+        change_log = self.audit_changes.call(record)
+        if change_log
+          record.audits.create(:user => user,
+            :username => user.try(self.username_method),
+            :action => action.to_s,
+            :change_log => change_log
+          )
+        end
       end
     end
     

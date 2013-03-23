@@ -114,6 +114,28 @@ Audit ActiveRecord models. Somewhere in your (backend) views show the audit logs
       	text-decoration: line-through;
       }  
 
+### Choose when audits are added
+If the simple_audit block returns a falsy value then the audit trail will not be added to.
+
+    class Booking < ActiveRecord::Base
+      simple_audit do |record|
+        if record.price > 10
+        {
+            :price => record.price,
+            :period => record.period, 
+            ...
+        }
+        end
+      end
+    end
+
+    booking = Booking.create! price: 5
+    booking.update_attributes price: 9
+    booking.update_attributes price: 20
+
+    booking.audits.length == 1
+
+
 # Assumptions and limitations
 
   * Your user model is called User and the current user User.current
