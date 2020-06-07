@@ -46,7 +46,6 @@ Gem::Specification.new do |s|
   s.homepage = %q{http://github.com/gtarnovan/simple_audit}
   s.rdoc_options = ["--charset=UTF-8"]
   s.require_paths = ["lib"]
-  s.rubyforge_project = %q{simple_audit}
   s.rubygems_version = %q{1.3.6}
   s.summary = %q{Simple auditing solution for ActiveRecord models}
   s.test_files = [
